@@ -56,34 +56,25 @@ public class PATest extends TestSetup{
 	public void reEnablePcap (String pcapToggleCount, @Optional("flow1") String flowName, String flowDuration) throws Exception{
 		int loopCount = Integer.parseInt(pcapToggleCount);
 		int sleepTime = Integer.parseInt(flowDuration)*60*1000;
-		//System.out.println("sleepTime"+sleepTime);
+		
 		for(int i =0; i < loopCount; i++) {
+			com.jcabi.log.Logger.info("reEnablePcap","Iteration:"+i);
 			com.jcabi.log.Logger.info("reEnablePcap","Sleeping for duration of configured pcap:"+flowDuration+" mins ");
-			keepSessionActivesleep(sleepTime);
-			if(paIndex.chkCurrentFlowState(flowName,false)) {
-				com.jcabi.log.Logger.info("reEnablePcap","Current capture state is OFF");
-				if(!paIndex.togglevFlowState(flowName)) {
-					com.jcabi.log.Logger.error("reEnablePcap","Could not turn on capture after "+(i-1)+" times");
-					throw new Exception("Reenabling pcap test failed");
-				} else {
-					com.jcabi.log.Logger.info("reEnablePcap","Turned on capture after"+(i-1)+" times");
-				}
-			} else {
-				com.jcabi.log.Logger.info("reEnablePcap","Current capture state is ON");
-				com.jcabi.log.Logger.info("reEnablePcap","First turning off capture");
-				if(!paIndex.togglevFlowState(flowName)) {
+			keepSessionActivesleep(sleepTime);	
+			//Check if "completed"
+			if(!paIndex.togglevFlowState(flowName)) {
 					com.jcabi.log.Logger.error("reEnablePcap","Could not turn off capture");
 					throw new Exception("Reenabling pcap test failed");
-				}
-				com.jcabi.log.Logger.info("reEnablePcap","Now turning on capture");
-				keepSessionActivesleep(1000);
-				if(!paIndex.togglevFlowState(flowName)) {
+			}
+			com.jcabi.log.Logger.info("reEnablePcap","Now turning on capture");
+			keepSessionActivesleep(1000);
+			if(!paIndex.togglevFlowState(flowName)) {
 					com.jcabi.log.Logger.error("reEnablePcap","Could not turn on capture");
 					throw new Exception("Reenabling pcap test failed");
-				}
 			}
 		}
 	}
+	
 	
 	public void keepSessionActivesleep(int totalSleep) {
 		int slTime = totalSleep;
